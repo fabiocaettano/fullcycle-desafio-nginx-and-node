@@ -74,8 +74,7 @@ const server = http.createServer((req,res)=>{
         res.writeHead(200,{'Content-Type':'text/html;charset=utf-8'});
         res.write(conteudo,'utf-8');
         res.end()
-    })
-    
+    })    
 }).listen(port,()=>{
     console.log('Rodando na Porta ' + port)
 })
