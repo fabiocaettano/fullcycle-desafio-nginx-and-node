@@ -17,7 +17,7 @@ const connection1 = new mysql.createConnection(config);
 connection1.connect(
     function (err) { 
     if (err)throw err;
-    console.log("Connection established.");           
+    console.log("Conexão estabelecida.");           
 });
 
 //Fila de query
