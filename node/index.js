@@ -10,74 +10,56 @@ const config = {
     database: 'nodedb'
 }
 
+//Iniciar conexão
 const connection1 = new mysql.createConnection(config);
 
+// Testar a Conexão
 connection1.connect(
     function (err) { 
-    if (err) { 
-        console.log("!!! Cannot connect !!! Error:");
-        throw err;
-    }
-    else
-    {
-       console.log("Connection established.");       
-    }
+    if (err)throw err;
+    console.log("Connection established.");           
 });
 
-const sql0 = `GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY 'root'`
-connection1.query(sql0)
+//Fila de query
+var sql = new Array(9)
+sql[0] = "GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY 'root'"
+sql[1] = "DROP TABLE IF EXISTS people"
+sql[2] = "CREATE TABLE people (id int not null auto_increment, name varchar(255), primary key(id))"
+sql[3] = "INSERT INTO people(name) values ('Fabio')"
+sql[4] = "INSERT INTO people(name) values ('Michele')"
+sql[5] = "INSERT INTO people(name) values ('Sophia')"
+sql[6] = "INSERT INTO people(name) values ('Amora')"
+sql[7] = "INSERT INTO people(name) values ('Caetano')"
+sql[8] = "INSERT INTO people(name) values ('Flavia')"
+sql[9] = "INSERT INTO people(name) values ('Tereza')"
 
-const sql1 = `DROP TABLE IF EXISTS people`
-connection1.query(sql1,function(err,rows,fields){
-    if (err) throw err;
-    console.log('Tabela excluida')
-})
 
-const sql2 = `CREATE TABLE people (id int not null auto_increment, name varchar(255), primary key(id))`
-connection1.query(sql2,function(err,rows,fields){
-    if (err) throw err;    
-    console.log('Tabela criada')
-})
+//Executar Query
+var i;
+for(i = 0;i < sql.length;i++){
+    console.log(sql[i])
+    connection1.query(sql[i])    
+}
 
-const sql3 = `INSERT INTO people(name) values ('Fabio')`
-connection1.query(sql3,function(err,rows,fields){
-    if (err) throw err;    
-    console.log('Inserted ' + rows.affectedRows + ' row(s).');
-});
-
-const sql4 = `INSERT INTO people(name) values ('Michele')`
-connection1.query(sql4)
-
-const sql5 = `INSERT INTO people(name) values ('Sophia')`
-connection1.query(sql5)
-
-const sql6 = `INSERT INTO people(name) values ('Amora')`
-connection1.query(sql6)
-
+//Fechar conexão
 connection1.end()
 
 
+// Dados da Pagina
 async function setRespostaHtml(cb){        
 
     const connection2 = new mysql.createConnection(config);
 
-    const sql7 = `SELECT * FROM people`
+    let sqlSelect = `SELECT * FROM people`
 
-    await connection2.query(sql7,function(err,rows,fields){
-               
-       console.log(rows)     
+    await connection2.query(sqlSelect,function(err,rows,fields){
 
        conteudo = "<h1>Full Cycle Rocks!</h1>"
-       conteudo += "<ul>"
-       
-       for(i = 0; i < rows.length;  i++){
-            console.log('Values: ',rows[i].name);
-
+       conteudo += "<ul>"       
+       for(i = 0; i < rows.length;  i++){            
             conteudo += "<li>" + rows[i].name + "</li>"
-        }
-        
-        conteudo += "</ul>"
-        
+        }        
+        conteudo += "</ul>"        
     });  
 
     await connection2.end()
@@ -85,15 +67,15 @@ async function setRespostaHtml(cb){
     return cb(conteudo);
 }
 
+//Trata a requisiçãp
 const server = http.createServer((req,res)=>{
+    //chama a função setrRespostaHtml que retorna o conteudo da página
     setRespostaHtml(respostaSql => {
         res.writeHead(200,{'Content-Type':'text/html;charset=utf-8'});
         res.write(conteudo,'utf-8');
         res.end()
     })
     
-})
-
-server.listen(port,()=>{
+}).listen(port,()=>{
     console.log('Rodando na Porta ' + port)
 })
