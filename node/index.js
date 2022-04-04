@@ -68,7 +68,7 @@ async function setRespostaHtml(cb){
 }
 
 //Trata a requisiçãp
-const server = http.createServer((req,res)=>{
+http.createServer((req,res)=>{
     //chama a função setrRespostaHtml que retorna o conteudo da página
     setRespostaHtml(respostaSql => {
         res.writeHead(200,{'Content-Type':'text/html;charset=utf-8'});
