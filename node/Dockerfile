@@ -4,7 +4,9 @@ WORKDIR /usr/src/app/
 
 COPY . .
 
-RUN npm install
+#Comando não funciona; não cria a pasta node_modules; 
+#No docker-compose funciona
+#RUN npm install
 
 RUN apt-get update && apt-get install -y wget
 
